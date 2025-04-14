@@ -163,8 +163,8 @@ def plot_evaluation_results(results):
         plt.close()
 
 def main():
-    file_path = 'data/corpus/eng_news_2024_300K/eng_news_2024_300K-sentences.txt'
-    window_sizes = [2, 4, 6, 8, 10, 12, 15, 18, 20]
+    file_path = 'data/eng_news_2024_300K-sentences.txt'
+    window_sizes = [2, 3, 5, 7, 10, 12, 15, 18, 20]
     
     print("Building vocabulary...")
     word2idx = build_vocabulary(file_path)
