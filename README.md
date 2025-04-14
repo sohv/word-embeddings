@@ -1,1 +1,1 @@
-# Word Representation in a High-Dimensional Space
+# Language Representation through Word Embeddings
