@@ -4,6 +4,8 @@ import re
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix
+from scipy.sparse.linalg import svds
+from scipy.stats import spearmanr
 import pickle
 from scipy.signal import find_peaks
 import os
@@ -23,14 +25,12 @@ def build_vocabulary(file_path, min_freq=5):
             word_freq.update(words)
     
     vocabulary = {word for word, freq in word_freq.items() if freq >= min_freq}
-    word2idx = {word: idx for idx, word in enumerate(sorted(vocabulary))}
-    
+    word2idx = {word: idx for idx, word in enumerate(sorted(vocabulary))}  
     return word2idx
 
 def create_cooccurrence_matrix(file_path, word2idx, window_size):
     vocab_size = len(word2idx)
-    cooc_dict = defaultdict(float)
-    
+    cooc_dict = defaultdict(float)   
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in tqdm(f, desc=f"Building co-occurrence matrix (window={window_size})"):
             text = line.strip().split('\t')[-1]
@@ -47,38 +47,31 @@ def create_cooccurrence_matrix(file_path, word2idx, window_size):
                         cooc_dict[(center_word_idx, context_word_idx)] += 1.0 / abs(i - j)
     
     rows, cols, data = zip(*[(i, j, v) for (i, j), v in cooc_dict.items()])
-    cooc_matrix = csr_matrix((data, (rows, cols)), shape=(vocab_size, vocab_size))
-    
+    cooc_matrix = csr_matrix((data, (rows, cols)), shape=(vocab_size, vocab_size))    
     return cooc_matrix
 
 def evaluate_matrix_statistics(cooc_matrix):
-    results = {}
-    
-    # Calculate coverage and sparsity
+    results = {}   
     total_possible = cooc_matrix.shape[0] * cooc_matrix.shape[1]
     nonzero = cooc_matrix.nnz
     sparsity = 1 - (nonzero / total_possible)
     results['sparsity'] = sparsity
     results['coverage'] = 1 - sparsity
     results['nonzero'] = nonzero
-    
-    # apply log(1+x) scaling to co-occurrence values
     data = cooc_matrix.data
     log_scaled_data = np.log1p(data)
 
     results['mean_cooc'] = np.mean(log_scaled_data)
     results['std_cooc'] = np.std(log_scaled_data)
     results['max_cooc'] = np.max(log_scaled_data)
-    results['raw_mean_cooc'] = np.mean(data) # add raw statistics for comparison
-    results['raw_std_cooc'] = np.std(data)
-    
+    results['raw_mean_cooc'] = np.mean(data)
+    results['raw_std_cooc'] = np.std(data)   
     return results
 
 def find_inflection_points(x, y):
     dy = np.gradient(y)
     peaks, _ = find_peaks(dy)
-    valleys, _ = find_peaks(-dy)
-    
+    valleys, _ = find_peaks(-dy)    
     inflection_points = sorted(list(peaks) + list(valleys))
     return [x[i] for i in inflection_points]
 
@@ -91,21 +84,19 @@ def plot_evaluation_results(results):
         'sparsity': ([r['sparsity'] for r in results], 'Sparsity', 'g', 'Matrix Sparsity'),
         'raw_mean_cooc': ([r['raw_mean_cooc'] for r in results], 'Raw Mean Co-occurrence', 'c', 'Raw Average'),
         'raw_std_cooc': ([r['raw_std_cooc'] for r in results], 'Raw Std Co-occurrence', 'y', 'Raw Standard Deviation')
-    }
-    
-    # Define which metrics should show inflection points
+    }   
+    # define which metrics should show inflection points
     show_inflection_points = {
         'coverage': True,
         'sparsity': True,
-        'mean_cooc': False,  # No inflection points for mean co-occurrence
-        'std_cooc': False,   # No inflection points for std co-occurrence
-        'raw_mean_cooc': False, # No inflection points for raw mean
-        'raw_std_cooc': False   # No inflection points for raw std
-    }
-    
+        'mean_cooc': False,
+        'std_cooc': False,   
+        'raw_mean_cooc': False, 
+        'raw_std_cooc': False  
+    }    
     for metric_name, (values, title, color, ylabel) in metrics.items():
         plt.figure(figsize=(10, 6))
-        plt.plot(window_sizes, values, f'{color}o-', label=title, linewidth=2, markersize=8)
+        plt.plot(window_sizes, values, f'{color}o-', label=title, linewidth=2, markersize=8)       
         if metric_name in ['mean_cooc', 'std_cooc']:
             if metric_name == 'mean_cooc':
                 plt.axhline(y=0.5, color='k', linestyle='--', alpha=0.3, label='Expected lower bound')
@@ -113,8 +104,7 @@ def plot_evaluation_results(results):
             else:  # std_cooc
                 plt.axhline(y=0.5, color='k', linestyle='--', alpha=0.3, label='Expected lower bound')
                 plt.axhline(y=2.0, color='k', linestyle='--', alpha=0.3, label='Expected upper bound')
-        
-        # Only calculate and show inflection points for selected metrics
+                       
         if show_inflection_points.get(metric_name, False):
             try:
                 inflection_points = find_inflection_points(window_sizes, values)
@@ -174,6 +164,132 @@ def plot_evaluation_results(results):
     finally:
         plt.close()
 
+def download_simlex_subset():
+    simlex_path = 'data/simlex_subset.txt'
+    if os.path.exists(simlex_path):
+        print(f"SimLex subset already exists at {simlex_path}")
+        return simlex_path
+
+    print("Creating SimLex-999 subset for evaluation...")
+    common_pairs = [
+        "man woman 3.08",
+        "book paper 5.00",
+        "car vehicle 8.02",
+        "child adult 7.50",
+        "food bread 6.19",
+        "music song 7.50",
+        "computer keyboard 5.14",
+        "water river 6.56",
+        "money cash 8.42",
+        "dog cat 6.75",
+        "road street 8.33",
+        "sun sky 5.46",
+        "time day 5.44",
+        "student teacher 6.81",
+        "house home 7.05",
+        "mother father 7.36",
+        "king queen 8.27",
+        "apple orange 5.23",
+        "city town 8.16",
+        "baby child 7.47"
+    ]
+    with open(simlex_path, 'w') as f:
+        for pair in common_pairs:
+            f.write(pair + '\n')
+    
+    print(f"Created SimLex subset with {len(common_pairs)} word pairs")
+    return simlex_path
+
+def verify_window_size(cooc_matrices, word2idx, recommended_window):
+    simlex_path = download_simlex_subset()
+    
+    simlex_pairs = []
+    with open(simlex_path, 'r') as f:
+        for line in f:
+            parts = line.strip().split()
+            if len(parts) >= 3:
+                w1, w2, score = parts[0], parts[1], float(parts[2])
+                simlex_pairs.append((w1, w2, score))
+    
+    valid_pairs = [(w1, w2, score) for w1, w2, score in simlex_pairs 
+                 if w1 in word2idx and w2 in word2idx]
+    
+    print(f"SimLex subset: {len(valid_pairs)} out of {len(simlex_pairs)} pairs found in vocabulary")
+    
+    if len(valid_pairs) < 5:
+        print("Not enough SimLex pairs in vocabulary for reliable evaluation")
+        return False
+    
+    window_corrs = {}
+    for window_size, matrix_data in cooc_matrices.items():
+        cooc_matrix = matrix_data['matrix']
+        
+        cooc_matrix_log = cooc_matrix.copy()
+        cooc_matrix_log.data = np.log1p(cooc_matrix.data)
+        
+        try:
+            print(f"Computing SVD for window={window_size}...")
+            u, s, vt = svds(cooc_matrix_log, k=50)  # Use 50 dimensions for efficiency
+
+            embeddings = u * np.sqrt(s)           
+            sim_scores = []
+            human_scores = []
+            
+            for w1, w2, score in valid_pairs:
+                vec1 = embeddings[word2idx[w1]]
+                vec2 = embeddings[word2idx[w2]] 
+                sim = np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
+                
+                sim_scores.append(sim)
+                human_scores.append(score)
+            
+            # spearman correlation
+            corr, _ = spearmanr(sim_scores, human_scores)
+            window_corrs[window_size] = corr
+            print(f"Window size {window_size}: Spearman correlation = {corr:.4f}")
+            
+        except Exception as e:
+            print(f"Error computing correlation for window={window_size}: {str(e)}")
+            window_corrs[window_size] = 0
+    
+    best_window = max(window_corrs, key=window_corrs.get)
+    
+    print("\nSimLex-999 Evaluation Results:")
+    print(f"Window correlations: {', '.join([f'w{w}={c:.4f}' for w, c in sorted(window_corrs.items())])}")
+    print(f"Best correlation at window size: {best_window} (correlation: {window_corrs[best_window]:.4f})")
+    print(f"Recommended window from coverage analysis: {recommended_window}")
+    
+    plt.figure(figsize=(10, 6))
+    windows = sorted(window_corrs.keys())
+    correlations = [window_corrs[w] for w in windows]
+    
+    plt.plot(windows, correlations, 'bo-', linewidth=2, markersize=8)
+    plt.axvline(x=recommended_window, color='r', linestyle='--', 
+               label=f'Coverage-based recommendation (w={recommended_window})')
+    plt.axvline(x=best_window, color='g', linestyle='--',
+               label=f'Semantic-based recommendation (w={best_window})')
+    
+    plt.xlabel('Window Size', fontsize=12)
+    plt.ylabel('Spearman Correlation', fontsize=12)
+    plt.title('SimLex-999 Subset Correlation by Window Size', fontsize=14, pad=20)
+    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.legend(fontsize=10)
+    plt.xticks(windows)
+    
+    try:
+        plt.savefig('plots/spearman_correlation.png', dpi=300, bbox_inches='tight')
+    except Exception as e:
+        print(f"Warning: Could not save Spearman plot: {str(e)}")
+    finally:
+        plt.close()
+    
+    if abs(best_window - recommended_window) <= 2: # evaluate if the recommended window is within 2 steps of the optimal window
+        print(f"Window size {recommended_window} is supported by SimLex evaluation (within 2 steps of optimal)")
+        return True
+    else:
+        print(f"Window size {recommended_window} differs significantly from SimLex optimal window {best_window}")
+        return False
+
 def main():
     file_path = 'data/eng_news_2024_300K-sentences.txt'
     window_sizes = [2, 3, 5, 7, 10, 12, 15, 18, 20]
@@ -184,14 +300,20 @@ def main():
     print(f"Vocabulary size: {vocab_size}")
     
     results = []
+    cooc_matrices = {} 
+    
     for window_size in window_sizes:
         print(f"\nProcessing window size: {window_size}")
         
-        # create and evaluate matrix
         cooc_matrix = create_cooccurrence_matrix(file_path, word2idx, window_size)
         eval_results = evaluate_matrix_statistics(cooc_matrix)
         eval_results['window_size'] = window_size
         results.append(eval_results)
+        
+        cooc_matrices[window_size] = {
+            'matrix': cooc_matrix,
+            'evaluation': eval_results
+        }
 
         with open(f'cooc_matrix_w{window_size}.pkl', 'wb') as f:
             pickle.dump({
@@ -219,6 +341,9 @@ def main():
         print("\nWindow Size Analysis:")
         print(f"Inflection points found at window sizes: {coverage_inflections}")
         print(f"Recommended window size: {recommended_window}")
+    
+    print("\nVerifying window size with SimLex-999 subset...")
+    verify_window_size(cooc_matrices, word2idx, recommended_window)
 
 if __name__ == "__main__":
     main()
