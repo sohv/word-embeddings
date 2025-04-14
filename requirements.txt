@@ -1,0 +1,8 @@
+numpy
+scipy
+matplotlib
+nltk
+tqdm
+pickle
+scikit-learn
+nltk
