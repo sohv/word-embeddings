@@ -11,7 +11,7 @@ import os
 from tqdm import tqdm
 import pandas as pd
 
-def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100, 200, 300, 400, 500]):
+def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100, 150, 200, 250, 300, 350, 400, 450, 500]):
     results = {}
     cooc_matrix_log = cooc_matrix.copy()
     cooc_matrix_log.data = np.log1p(cooc_matrix_log.data)
@@ -74,7 +74,7 @@ def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100
     plt.grid(True)
     
     plt.tight_layout()
-    plt.savefig('plots/svd_dimension_analysis.png', dpi=300, bbox_inches='tight')
+    plt.savefig('plots/svd_dimension_analysis_100.png', dpi=300, bbox_inches='tight')
     plt.close()
     
     results_df = pd.DataFrame({
@@ -97,7 +97,7 @@ def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100
     table.set_fontsize(10)
     table.scale(1.2, 1.5)
     
-    plt.savefig('plots/svd_dimension_results_table.png', dpi=300, bbox_inches='tight')
+    plt.savefig('plots/svd_dimension_results_table_100.png', dpi=300, bbox_inches='tight')
     plt.close()
     
     best_dim = max(results.keys(), key=lambda d: results[d]['correlation'])
@@ -120,7 +120,7 @@ def main():
 
     simlex_pairs = []
     try:
-        with open('data/simlex_subset.txt', 'r') as f:
+        with open('data/simlex_subset_100.txt', 'r') as f:
             for line in f:
                 parts = line.strip().split()
                 if len(parts) >= 3:
@@ -130,10 +130,10 @@ def main():
         print("Error: Could not find SimLex subset file")
         return
     
-    dimensions = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500]
+    dimensions = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000]
     results, best_dim = test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions)
     
-    with open('svd_analysis_results.pkl', 'wb') as f:
+    with open('svd_analysis_results_100.pkl', 'wb') as f:
         pickle.dump({
             'results': results,
             'best_dimension': best_dim,
