@@ -1,5 +1,5 @@
 '''
-This script is used to find the optimal SVD dimension for a subset of SimLex-999 with 20 pairs. We will use full SVD (Singular Value Decomposition) to find the optimal dimension.
+This script is used to find the optimal SVD dimension for a subset of SimLex-999 with 50 pairs. We will use full SVD (Singular Value Decomposition) to find the optimal dimension.
 '''
 
 import numpy as np
@@ -23,7 +23,7 @@ def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100
     
     for d in tqdm(dimensions, desc="Testing SVD dimensions"):
         try:
-            u, s, vt = svds(cooc_matrix_log, k=d, random_state=42, maxiter=2000, tol=1e-6) 
+            u, s, vt = svds(cooc_matrix_log, k=d, random_state=42, maxiter=2000, tol=1e-6)
             embeddings = u * np.sqrt(s)
             sim_scores = []
             human_scores = []
@@ -74,7 +74,7 @@ def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100
     plt.grid(True)
     
     plt.tight_layout()
-    plt.savefig('plots/svd_dimension_analysis.png', dpi=300, bbox_inches='tight')
+    plt.savefig('plots/svd_dimension_analysis_50.png', dpi=300, bbox_inches='tight')
     plt.close()
     
     results_df = pd.DataFrame({
@@ -97,7 +97,7 @@ def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100
     table.set_fontsize(10)
     table.scale(1.2, 1.5)
     
-    plt.savefig('plots/svd_dimension_results_table.png', dpi=300, bbox_inches='tight')
+    plt.savefig('plots/svd_dimension_results_table_50.png', dpi=300, bbox_inches='tight')
     plt.close()
     
     best_dim = max(results.keys(), key=lambda d: results[d]['correlation'])
@@ -120,7 +120,7 @@ def main():
 
     simlex_pairs = []
     try:
-        with open('data/simlex_subset.txt', 'r') as f:
+        with open('data/simlex_subset_50.txt', 'r') as f:
             for line in f:
                 parts = line.strip().split()
                 if len(parts) >= 3:
