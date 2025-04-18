@@ -133,7 +133,7 @@ def main():
     dimensions = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500]
     results, best_dim = test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions)
     
-    with open('svd_analysis_results.pkl', 'wb') as f:
+    with open('svd_analysis_results_50.pkl', 'wb') as f:
         pickle.dump({
             'results': results,
             'best_dimension': best_dim,
