@@ -5,13 +5,13 @@ import matplotlib.pyplot as plt
 import pickle
 import os
 from tqdm import tqdm
+import pandas as pd
 
 def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100, 200, 300, 400, 500]):
     results = {}
     cooc_matrix_log = cooc_matrix.copy()
     cooc_matrix_log.data = np.log1p(cooc_matrix_log.data)
     
-    # Get valid SimLex pairs
     valid_pairs = [(w1, w2, score) for w1, w2, score in simlex_pairs 
                   if w1 in word2idx and w2 in word2idx]
     
@@ -19,7 +19,7 @@ def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100
     
     for d in tqdm(dimensions, desc="Testing SVD dimensions"):
         try:
-            u, s, vt = svds(cooc_matrix_log, k=d) # compute SVD
+            u, s, vt = svds(cooc_matrix_log, k=d, random_state=42, maxiter=2000, tol=1e-6) # Add random_state and convergence parameters
             embeddings = u * np.sqrt(s)
             sim_scores = []
             human_scores = []
@@ -33,9 +33,7 @@ def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100
                 sim_scores.append(sim)
                 human_scores.append(score)
             
-            # Spearman correlation
             correlation, p_value = spearmanr(sim_scores, human_scores)
-            # explained variance
             explained_var = (s**2).sum() / (cooc_matrix_log.data**2).sum()
             results[d] = {
                 'correlation': correlation,
@@ -73,6 +71,29 @@ def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100
     
     plt.tight_layout()
     plt.savefig('plots/svd_dimension_analysis.png', dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    results_df = pd.DataFrame({
+        'Dimension': dims,
+        'Spearman Correlation': correlations,
+        'Explained Variance': explained_vars
+    })
+    
+    fig, ax = plt.subplots(figsize=(12, 4))
+    ax.axis('tight')
+    ax.axis('off')
+    
+    # create the results table
+    table = ax.table(cellText=results_df.round(4).values,
+                    colLabels=results_df.columns,
+                    cellLoc='center',
+                    loc='center')
+    
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.scale(1.2, 1.5)
+    
+    plt.savefig('plots/svd_dimension_results_table.png', dpi=300, bbox_inches='tight')
     plt.close()
     
     best_dim = max(results.keys(), key=lambda d: results[d]['correlation'])
