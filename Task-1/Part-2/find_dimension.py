@@ -1,5 +1,10 @@
 '''
-This script is used to find the optimal SVD dimension for a subset of SimLex-999 with 20 pairs. We will use full SVD (Singular Value Decomposition) to find the optimal dimension.
+This script is used to find the optimal SVD dimension for the subset of SimLex-999 with 50, 100, 200 and 500 pairs. We will use full SVD (Singular Value Decomposition) to find the optimal dimension.
+Instructions:
+1. Change the subset path to the desired subset size.
+2. In the plots/ path, append the subset size to the file name at the end. (Eg: svd_dimension_analysis_500.png, svd_dimension_results_table_500.png)
+3. Do the same for the pickle file.
+4. Run the script.
 '''
 
 import numpy as np
@@ -11,7 +16,7 @@ import os
 from tqdm import tqdm
 import pandas as pd
 
-def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000]):
+def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500]):
     results = {}
     cooc_matrix_log = cooc_matrix.copy()
     cooc_matrix_log.data = np.log1p(cooc_matrix_log.data)
@@ -74,7 +79,7 @@ def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100
     plt.grid(True)
     
     plt.tight_layout()
-    plt.savefig('plots/svd_dimension_analysis_full.png', dpi=300, bbox_inches='tight')
+    plt.savefig('plots/svd_dimension_analysis_500.png', dpi=300, bbox_inches='tight')
     plt.close()
     
     results_df = pd.DataFrame({
@@ -97,7 +102,7 @@ def test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions=[50, 100
     table.set_fontsize(10)
     table.scale(1.2, 1.5)
     
-    plt.savefig('plots/svd_dimension_results_table_full.png', dpi=300, bbox_inches='tight')
+    plt.savefig('plots/svd_dimension_results_table_500.png', dpi=300, bbox_inches='tight')
     plt.close()
     
     best_dim = max(results.keys(), key=lambda d: results[d]['correlation'])
@@ -120,7 +125,7 @@ def main():
 
     simlex_pairs = []
     try:
-        with open('data/simlex_full.txt', 'r') as f:
+        with open('data/simlex_subset_500.txt', 'r') as f:
             for line in f:
                 parts = line.strip().split()
                 if len(parts) >= 3:
@@ -130,10 +135,10 @@ def main():
         print("Error: Could not find SimLex subset file")
         return
     
-    dimensions = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000]
+    dimensions = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500]
     results, best_dim = test_svd_dimensions(cooc_matrix, word2idx, simlex_pairs, dimensions)
     
-    with open('svd_analysis_results_full.pkl', 'wb') as f:
+    with open('svd_analysis_results_500.pkl', 'wb') as f:
         pickle.dump({
             'results': results,
             'best_dimension': best_dim,
