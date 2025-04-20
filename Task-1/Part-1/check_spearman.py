@@ -85,7 +85,6 @@ def plot_evaluation_results(results):
         'raw_mean_cooc': ([r['raw_mean_cooc'] for r in results], 'Raw Mean Co-occurrence', 'c', 'Raw Average'),
         'raw_std_cooc': ([r['raw_std_cooc'] for r in results], 'Raw Std Co-occurrence', 'y', 'Raw Standard Deviation')
     }   
-    # define which metrics should show inflection points
     show_inflection_points = {
         'coverage': True,
         'sparsity': True,
@@ -101,7 +100,7 @@ def plot_evaluation_results(results):
             if metric_name == 'mean_cooc':
                 plt.axhline(y=0.5, color='k', linestyle='--', alpha=0.3, label='Expected lower bound')
                 plt.axhline(y=1.0, color='k', linestyle='--', alpha=0.3, label='Expected upper bound')
-            else:  # std_cooc
+            else: 
                 plt.axhline(y=0.5, color='k', linestyle='--', alpha=0.3, label='Expected lower bound')
                 plt.axhline(y=2.0, color='k', linestyle='--', alpha=0.3, label='Expected upper bound')
                        
@@ -169,36 +168,6 @@ def download_simlex_subset():
     if os.path.exists(simlex_path):
         print(f"SimLex subset already exists at {simlex_path}")
         return simlex_path
-
-    print("Creating SimLex-999 subset for evaluation...")
-    common_pairs = [
-        "man woman 3.08",
-        "book paper 5.00",
-        "car vehicle 8.02",
-        "child adult 7.50",
-        "food bread 6.19",
-        "music song 7.50",
-        "computer keyboard 5.14",
-        "water river 6.56",
-        "money cash 8.42",
-        "dog cat 6.75",
-        "road street 8.33",
-        "sun sky 5.46",
-        "time day 5.44",
-        "student teacher 6.81",
-        "house home 7.05",
-        "mother father 7.36",
-        "king queen 8.27",
-        "apple orange 5.23",
-        "city town 8.16",
-        "baby child 7.47"
-    ]
-    with open(simlex_path, 'w') as f:
-        for pair in common_pairs:
-            f.write(pair + '\n')
-    
-    print(f"Created SimLex subset with {len(common_pairs)} word pairs")
-    return simlex_path
 
 def verify_window_size(cooc_matrices, word2idx, recommended_window):
     simlex_path = download_simlex_subset()
