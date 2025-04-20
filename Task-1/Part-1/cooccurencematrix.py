@@ -69,7 +69,7 @@ def evaluate_matrix_statistics(cooc_matrix):
     results['mean_cooc'] = np.mean(log_scaled_data)
     results['std_cooc'] = np.std(log_scaled_data)
     results['max_cooc'] = np.max(log_scaled_data)
-    results['raw_mean_cooc'] = np.mean(data) # add raw statistics for comparison
+    results['raw_mean_cooc'] = np.mean(data)
     results['raw_std_cooc'] = np.std(data)
     
     return results
@@ -93,14 +93,13 @@ def plot_evaluation_results(results):
         'raw_std_cooc': ([r['raw_std_cooc'] for r in results], 'Raw Std Co-occurrence', 'y', 'Raw Standard Deviation')
     }
     
-    # Define which metrics should show inflection points
     show_inflection_points = {
         'coverage': True,
         'sparsity': True,
-        'mean_cooc': False,  # No inflection points for mean co-occurrence
-        'std_cooc': False,   # No inflection points for std co-occurrence
-        'raw_mean_cooc': False, # No inflection points for raw mean
-        'raw_std_cooc': False   # No inflection points for raw std
+        'mean_cooc': False, 
+        'std_cooc': False,  
+        'raw_mean_cooc': False, 
+        'raw_std_cooc': False
     }
     
     for metric_name, (values, title, color, ylabel) in metrics.items():
@@ -114,7 +113,6 @@ def plot_evaluation_results(results):
                 plt.axhline(y=0.5, color='k', linestyle='--', alpha=0.3, label='Expected lower bound')
                 plt.axhline(y=2.0, color='k', linestyle='--', alpha=0.3, label='Expected upper bound')
         
-        # Only calculate and show inflection points for selected metrics
         if show_inflection_points.get(metric_name, False):
             try:
                 inflection_points = find_inflection_points(window_sizes, values)
