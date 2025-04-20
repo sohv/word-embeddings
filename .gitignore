@@ -6,3 +6,6 @@ misc/
 draft/
 models/
 embeddings/
+Task-1/Part-1/analyse.py
+data/GoogleNews-vectors-negative300.bin
+data/GoogleNews-vectors-negative300.bin.zip
