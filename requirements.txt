@@ -6,3 +6,4 @@ tqdm
 pickle
 scikit-learn
 nltk
+pandas
