@@ -3,7 +3,7 @@ This script analyses the structure of the generated co-occurrence matrix for the
 '''
 import pickle
 
-PICKLE_PATH = 'models/cooc_matrix_w5.pkl'
+PICKLE_PATH = 'cooc_matrix_w5.pkl'
 
 def inspect_pickle(file_path):
     with open(file_path, 'rb') as f:
