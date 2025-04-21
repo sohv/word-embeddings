@@ -27,7 +27,7 @@ def visualize_matrix(matrix):
     plt.title('Co-occurrence Matrix Heatmap')
     plt.show()
 
-file_path = 'models/cooc_matrix_w5.pkl'
+file_path = 'models/co-occurrence/cooc_matrix_w5.pkl'
 matrix = load_matrix(file_path)
 if matrix is not None:
     visualize_matrix(matrix)
