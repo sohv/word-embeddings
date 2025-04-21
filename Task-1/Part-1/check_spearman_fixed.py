@@ -263,7 +263,6 @@ def verify_window_size(cooc_matrices, word2idx, recommended_window):
             print(f"Computing SVD for window={window_size}...")
             u, s, vt = svds(cooc_matrix, k=1490)
 
-            # Normalize embeddings
             embeddings = u * np.sqrt(s)
             embeddings = embeddings / np.linalg.norm(embeddings, axis=1, keepdims=True)
             
@@ -274,18 +273,12 @@ def verify_window_size(cooc_matrices, word2idx, recommended_window):
                 vec1 = embeddings[word2idx[w1]]
                 vec2 = embeddings[word2idx[w2]]
                 
-                # Cosine similarity
                 sim = np.dot(vec1, vec2)
                 
                 sim_scores.append(sim)
                 human_scores.append(score)
             
-            corr, _ = spearmanr(sim_scores, human_scores)            
-            if 5 <= window_size <= 10:
-                corr = corr * (1 + 0.2 * (1 - abs(window_size - 7.5) / 2.5))
-            else:
-                corr = corr * 0.8
-            
+            corr, _ = spearmanr(sim_scores, human_scores)
             window_corrs[window_size] = corr
             print(f"Window size {window_size}: Spearman correlation = {corr:.4f}")
             
