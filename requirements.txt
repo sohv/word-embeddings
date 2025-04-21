@@ -7,3 +7,4 @@ pickle
 scikit-learn
 nltk
 pandas
+seaborn
