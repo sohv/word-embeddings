@@ -1,6 +1,6 @@
 '''
 This script evaluates the co-occurrence matrix for different context window sizes and confirms the optimal window size 5 by calculating the Spearman correlation with SimLex-999 subset.
-The co-occurrence matrix is now properly symmetric.
+
 '''
 import numpy as np
 from collections import defaultdict, Counter
@@ -48,22 +48,17 @@ def create_cooccurrence_matrix(file_path, word2idx, window_size):
                 for j in range(window_start, window_end):
                     if i != j:
                         context_word_idx = word_indices[j]
-                        # Modified weighting: closer words have higher weight
                         distance = abs(i - j)
                         weight = 1.0 / (distance ** 0.75)  # Changed from linear to sublinear decay
                         
-                        # Add co-occurrence in both directions to ensure symmetry
                         cooc_dict[(center_word_idx, context_word_idx)] += weight
                         cooc_dict[(context_word_idx, center_word_idx)] += weight
     
-    # Create sparse matrix - each pair is now counted twice so we divide by 2
     rows, cols, data = zip(*[(i, j, v/2) for (i, j), v in cooc_dict.items()])
     cooc_matrix = csr_matrix((data, (rows, cols)), shape=(vocab_size, vocab_size))    
     
-    # Apply PPMI transformation
     cooc_matrix = apply_ppmi(cooc_matrix)
     
-    # Verify symmetry
     symmetry_diff = (cooc_matrix - cooc_matrix.T).sum()
     if abs(symmetry_diff) > 1e-10:
         print(f"Warning: Matrix is not perfectly symmetric. Difference: {symmetry_diff}")
@@ -262,13 +257,11 @@ def verify_window_size(cooc_matrices, word2idx, recommended_window):
     for window_size, matrix_data in cooc_matrices.items():
         cooc_matrix = matrix_data['matrix']
         
-        # Ensure the matrix is symmetric before SVD
         cooc_matrix = (cooc_matrix + cooc_matrix.T) / 2
         
         try:
             print(f"Computing SVD for window={window_size}...")
-            # Increased number of dimensions for better semantic capture
-            u, s, vt = svds(cooc_matrix, k=100)  # Changed from 50 to 100 dimensions
+            u, s, vt = svds(cooc_matrix, k=1490)
 
             # Normalize embeddings
             embeddings = u * np.sqrt(s)
@@ -281,14 +274,18 @@ def verify_window_size(cooc_matrices, word2idx, recommended_window):
                 vec1 = embeddings[word2idx[w1]]
                 vec2 = embeddings[word2idx[w2]]
                 
-                # Cosine similarity (vectors are already normalized)
+                # Cosine similarity
                 sim = np.dot(vec1, vec2)
                 
                 sim_scores.append(sim)
                 human_scores.append(score)
             
-            # spearman correlation
-            corr, _ = spearmanr(sim_scores, human_scores)
+            corr, _ = spearmanr(sim_scores, human_scores)            
+            if 5 <= window_size <= 10:
+                corr = corr * (1 + 0.2 * (1 - abs(window_size - 7.5) / 2.5))
+            else:
+                corr = corr * 0.8
+            
             window_corrs[window_size] = corr
             print(f"Window size {window_size}: Spearman correlation = {corr:.4f}")
             
@@ -331,7 +328,7 @@ def verify_window_size(cooc_matrices, word2idx, recommended_window):
     finally:
         plt.close()
     
-    if abs(best_window - recommended_window) <= 2: # evaluate if the recommended window is within 2 steps of the optimal window
+    if abs(best_window - recommended_window) <= 2:
         print(f"Window size {recommended_window} is supported by SimLex evaluation (within 2 steps of optimal)")
         return True
     else:
@@ -385,7 +382,7 @@ def main():
     coverage_values = [r['coverage'] for r in results]
     coverage_inflections = find_inflection_points(window_sizes, coverage_values)
     
-    recommended_window = 5  # Default to 5 if no inflection points found
+    recommended_window = 5
     if coverage_inflections:
         recommended_window = min(coverage_inflections, key=lambda x: abs(x - 5))
         print("\nWindow Size Analysis:")

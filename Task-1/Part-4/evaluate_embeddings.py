@@ -283,7 +283,7 @@ def main():
     vocab_path = 'data/vocab_file.txt'
     vocab, word2id, id2word = load_vocab(vocab_path)
     
-    matrix_path = 'models/co-occurrence/cooc_matrix_w5.pkl'
+    matrix_path = 'models/co-occurrence-symmetry/cooc_matrix_w5.pkl'
     cooc_matrix = load_co_occurrence(matrix_path)
     
     word2vec_path = 'embeddings/word2vec_embeddings.pkl'

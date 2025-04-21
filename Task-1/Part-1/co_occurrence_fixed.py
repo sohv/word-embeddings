@@ -50,17 +50,13 @@ def create_cooccurrence_matrix(file_path, word2idx, window_size):
                         context_word_idx = word_indices[j]
                         weight = 1.0 / abs(i - j)
                         
-                        # Add co-occurrence in both directions to ensure symmetry
                         cooc_dict[(center_word_idx, context_word_idx)] += weight
                         cooc_dict[(context_word_idx, center_word_idx)] += weight
     
-    # Create sparse matrix - each pair is now counted twice so we divide by 2
     rows, cols, data = zip(*[(i, j, v/2) for (i, j), v in cooc_dict.items()])
     cooc_matrix = csr_matrix((data, (rows, cols)), shape=(vocab_size, vocab_size))
-    
-    # Verify symmetry
     diff = (cooc_matrix - cooc_matrix.T).sum()
-    if diff > 1e-10:  # Account for floating point precision
+    if diff > 1e-10:
         print(f"Warning: Matrix is not symmetric. Difference: {diff}")
     
     return cooc_matrix
@@ -68,7 +64,6 @@ def create_cooccurrence_matrix(file_path, word2idx, window_size):
 def evaluate_matrix_statistics(cooc_matrix):
     results = {}
     
-    # Calculate coverage and sparsity
     total_possible = cooc_matrix.shape[0] * cooc_matrix.shape[1]
     nonzero = cooc_matrix.nnz
     sparsity = 1 - (nonzero / total_possible)
@@ -76,7 +71,6 @@ def evaluate_matrix_statistics(cooc_matrix):
     results['coverage'] = 1 - sparsity
     results['nonzero'] = nonzero
     
-    # apply log(1+x) scaling to co-occurrence values
     data = cooc_matrix.data
     log_scaled_data = np.log1p(data)
 
@@ -89,14 +83,12 @@ def evaluate_matrix_statistics(cooc_matrix):
     results['raw_min_cooc'] = np.min(data) if len(data) > 0 else 0
     results['raw_max_cooc'] = np.max(data) if len(data) > 0 else 0
     
-    # Check for symmetry
     symmetry_diff = (cooc_matrix - cooc_matrix.T).sum()
     results['symmetry_diff'] = float(symmetry_diff)
     
     return results
 
 def validate_corpus(file_path, sample_size=10):
-    """Validates a sample of the corpus to check for potential issues"""
     results = {'sample_lines': []}
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -105,7 +97,6 @@ def validate_corpus(file_path, sample_size=10):
         total_lines = len(lines)
         results['total_lines'] = total_lines
         
-        # Process a sample of lines
         sample_indices = np.random.choice(total_lines, min(sample_size, total_lines), replace=False)
         for idx in sample_indices:
             line = lines[idx].strip()
@@ -116,7 +107,6 @@ def validate_corpus(file_path, sample_size=10):
                 'word_count': len(processed)
             })
             
-        # Calculate average word count
         word_counts = [sample['word_count'] for sample in results['sample_lines']]
         results['avg_word_count'] = np.mean(word_counts) if word_counts else 0
         results['min_word_count'] = np.min(word_counts) if word_counts else 0
@@ -210,7 +200,6 @@ def plot_evaluation_results(results):
                       if k in ['coverage', 'mean_cooc', 'std_cooc', 'sparsity']}
     
     for metric_name, (values, title, color, _) in summary_metrics.items():
-        # Avoid division by zero by adding a small epsilon
         epsilon = 1e-10
         normalized_values = (values - np.min(values)) / (np.max(values) - np.min(values) + epsilon)
         plt.plot(window_sizes, normalized_values, f'{color}o-', 
@@ -234,7 +223,6 @@ def main():
     file_path = 'data/eng_news_2024_300K-sentences.txt'
     window_sizes = [2, 3, 5, 7, 10, 12, 15, 18, 20]
     
-    # Validate corpus
     print("Validating corpus samples...")
     corpus_validation = validate_corpus(file_path)
     print(f"Total lines in corpus: {corpus_validation.get('total_lines', 'unknown')}")
@@ -254,7 +242,6 @@ def main():
     for window_size in window_sizes:
         print(f"\nProcessing window size: {window_size}")
         
-        # create and evaluate matrix
         cooc_matrix = create_cooccurrence_matrix(file_path, word2idx, window_size)
         eval_results = evaluate_matrix_statistics(cooc_matrix)
         eval_results['window_size'] = window_size
