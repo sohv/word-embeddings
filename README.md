@@ -14,60 +14,58 @@ This project implements a comprehensive framework for analyzing and evaluating w
 
 ```
 .
-    ├── README.md
-    ├── requirements.txt
-    ├── data/
-    │   ├── eng_news_2024_300K-sentences.txt
-    │   ├── SimLex-999.txt
-    │   ├── simlex_full.txt
-    │   ├── simlex_subset_100.txt
-    │   ├── simlex_subset_200.txt
-    │   ├── simlex_subset_50.txt
-    │   ├── simlex_subset_500.txt
-    │   ├── vocab-eng-news-2024.txt
-    │   ├── vocab_file.txt
-    │   └── word2id.pkl
-    ├── images/
-    ├── plots/
-    │   ├── Task-1/
-    │   │   ├── Part-1/
-    │   │   ├── Part-2/
-    │   │   ├── Part-3/
-    │   │   └── Part-4/
-    │   │       ├── modified-results/
-    │   │       └── original/
-    │   └── Task-3/
-    │       ├── gender_bias/
-    │       └── racial_bias/
-    ├── Task-1/
-    │   ├── .DS_Store
-    │   ├── Part-1/
-    │   │   ├── analyse_matrix.py
-    │   │   ├── check_spearman.py
-    │   │   ├── check_spearman_fixed.py
-    │   │   ├── co_occurence_matrix.py
-    │   │   ├── co_occurrence_fixed.py
-    │   │   ├── visualise_cooccurrence.py
-    │   │   └── .DS_Store
-    │   ├── Part-2/
-    │   │   ├── find_dimension_spearman.py
-    │   │   ├── find_dimension_variance.py
-    │   │   ├── find_dimension_variance_modified.py
-    │   │   ├── generate_simlex_subset.py
-    │   │   └── preprocess_simlex.py
-    │   ├── Part-3/
-    │   │   └── evaluate_co_occurrence_embeddings.py
-    │   └── Part-4/
-    │       ├── diagnose_negative_correlation.py
-    │       ├── evaluate_embeddings.py
-    │       ├── glove_embeddings_download.py
-    │       ├── reduce_dimension_cooccurrence_matrix.py
-    │       ├── vocab_file_corpus.py
-    │       └── word2vec_embeddings_download.py
-    ├── Task-2/
-    │   └── cross_lingual_alignment.ipynb
-    └── Task-3/
-        └── evaluation_harmful_association.ipynb
+├── README.md
+├── requirements.txt
+├── data/
+│   ├── eng_news_2024_300K-sentences.txt
+│   ├── SimLex-999.txt
+│   ├── simlex_full.txt
+│   ├── simlex_subset_100.txt
+│   ├── simlex_subset_200.txt
+│   ├── simlex_subset_50.txt
+│   ├── simlex_subset_500.txt
+│   ├── vocab-eng-news-2024.txt
+│   ├── vocab_file.txt
+│   └── word2id.pkl
+├── images/
+├── plots/
+│   ├── Task-1/
+│   │   ├── Part-1/
+│   │   ├── Part-2/
+│   │   ├── Part-3/
+│   │   └── Part-4/
+│   │       ├── modified-results/
+│   │       └── original/
+│   └── Task-3/
+│       ├── gender_bias/
+│       └── racial_bias/
+├── Task-1/
+│   ├── Part-1/
+│   │   ├── analyse_matrix.py
+│   │   ├── check_spearman.py
+│   │   ├── check_spearman_fixed.py
+│   │   ├── co_occurence_matrix.py
+│   │   ├── co_occurrence_fixed.py
+│   │   ├── visualise_cooccurrence.py
+│   ├── Part-2/
+│   │   ├── find_dimension_spearman.py
+│   │   ├── find_dimension_variance.py
+│   │   ├── find_dimension_variance_modified.py
+│   │   ├── generate_simlex_subset.py
+│   │   └── preprocess_simlex.py
+│   ├── Part-3/
+│   │   └── evaluate_co_occurrence_embeddings.py
+│   └── Part-4/
+│       ├── diagnose_negative_correlation.py
+│       ├── evaluate_embeddings.py
+│       ├── glove_embeddings_download.py
+│       ├── reduce_dimension_cooccurrence_matrix.py
+│       ├── vocab_file_corpus.py
+│       └── word2vec_embeddings_download.py
+├── Task-2/
+│   └── cross_lingual_alignment.ipynb
+└── Task-3/
+    └── evaluation_harmful_association.ipynb
 ```
 
 ## Setup
