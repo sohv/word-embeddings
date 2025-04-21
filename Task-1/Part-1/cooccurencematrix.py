@@ -1,3 +1,6 @@
+'''
+This script builds a co-occurrence matrix for different context window sizes, evaluates the matrix statistics and finds the optimal window size.
+'''
 import numpy as np
 from collections import defaultdict, Counter
 import re

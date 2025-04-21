@@ -1,3 +1,6 @@
+'''
+This script evaluates the co-occurrence matrix for different context window sizes and confirms the optimal window size 5 by calculating the Spearman correlation with SimLex-999 subset.
+'''
 import numpy as np
 from collections import defaultdict, Counter
 import re

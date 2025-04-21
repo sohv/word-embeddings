@@ -1,3 +1,8 @@
+'''
+This script finds the optimal SVD dimension for the co-occurrence matrix using the explained variance method. The approach used is explained variance + noise threshold, where the explained variance cutoff is 85% and the minimum singular value ratio is 1% of the total singular values. 
+An ideal dimension should retain 85% of the original matrix's information and must also balance the trade-off between noise and information loss. The dimensions are tested from 100 to 2000 with a step of 100. The results are stored in the plots/Task-1/Part-2/ folder.
+'''
+
 import numpy as np
 from scipy.sparse.linalg import svds
 import matplotlib.pyplot as plt
@@ -47,7 +52,7 @@ def test_svd_dimensions(cooc_matrix, dimensions=range(100, 2001, 100)):
         except Exception as e:
             print(f"Error processing dimension {d}: {str(e)}")
 
-    # Find optimal dimension using the new function
+    # find optimal dimension using the new function
     max_dim = max(dimensions)
     u, s, vt = svds(cooc_matrix_log, k=max_dim, random_state=42, maxiter=2000, tol=1e-6)
     optimal_dim, cumulative_var = find_optimal_dimension(s)

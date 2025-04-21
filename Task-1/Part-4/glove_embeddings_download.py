@@ -1,3 +1,8 @@
+'''
+This script downloads the GloVe embeddings from the Stanford NLP group and saves the top 100000 embeddings of dimension 300 in the embeddings/ folder.
+Since embeddings/ folder does not exist, create the folder in the root directory before running the script.
+'''
+
 import numpy as np
 import requests
 import zipfile

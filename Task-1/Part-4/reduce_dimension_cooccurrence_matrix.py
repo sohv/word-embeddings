@@ -1,3 +1,8 @@
+'''
+This script reduces the dimension of the generated co-occurrence matrix of window size 5 to 300 using SVD. The reduction is done to facilitate easier evaluation of the embeddings with pre-trained embeddings of word2vec and glove. 
+The reduced embeddings are saved in the models/ folder. Create the folder models/ in the root directory before running the script.
+'''
+
 import numpy as np
 import pickle
 from scipy.sparse.linalg import svds

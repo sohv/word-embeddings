@@ -1,3 +1,7 @@
+'''
+This script builds a vocabulary file from the English text corpus used to generate the co-occurrence matrix. THe minimum frequency of the words is set to 5 to match the dimension of the co-occurrence matrix. The vocabulary is saved in the data/ folder.
+'''
+
 import re
 import os
 from collections import Counter

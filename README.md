@@ -1,6 +1,14 @@
 # Word Embedding Analysis Project
 
-This project focuses on analyzing and evaluating different word embedding methods, including co-occurrence matrices, GloVe, and Word2Vec embeddings. The analysis includes dimensionality reduction, similarity evaluation, and visualization of word embeddings.
+## Overview
+This project implements a comprehensive framework for analyzing and evaluating word embeddings derived from co-occurrence matrices, with comparison to pre-trained embeddings (GloVe and Word2Vec). The analysis focuses on understanding how different dimensionality reduction techniques affect embedding quality and semantic relationships between words.
+
+## Key Features
+- **Co-occurrence Matrix Processing**: Efficient handling and analysis of word co-occurrence data
+- **Dimensionality Reduction**: Implementation of SVD-based dimensionality reduction with configurable dimensions
+- **Embedding Evaluation**: Quantitative assessment using SimLex dataset and qualitative analysis through word similarity tasks
+- **Visualization Tools**: PCA and t-SNE based visualization of high-dimensional word embeddings
+- **Comparative Analysis**: Benchmarking against established embedding methods (GloVe, Word2Vec)
 
 ## Project Structure
 

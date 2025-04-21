@@ -1,3 +1,6 @@
+'''
+This script visualises the co-occurrence matrix for the optimal window size 5 in form of a heatmap. The visualised images are stored in images/ folder.
+'''
 import pickle
 import matplotlib.pyplot as plt
 import seaborn as sns

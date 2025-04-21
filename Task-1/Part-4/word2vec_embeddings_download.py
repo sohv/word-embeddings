@@ -1,3 +1,8 @@
+'''
+This script downloads the Word2vec embeddings from the GoogleNews-vectors-negative300.bin zip file and saves the top 100000 embeddings of dimension 300 in the embeddings/ folder.
+Before running the script, download the zip file from this link: https://www.kaggle.com/datasets/sugataghosh/google-word2vec and save it in data/ folder.
+'''
+
 import numpy as np
 import struct
 import os
@@ -65,7 +70,7 @@ def extract_word2vec_from_zip(zip_path, extract_dir=None):
     
     return bin_path
 
-zip_path = "GoogleNews-vectors-negative300.bin.zip"
+zip_path = "data/GoogleNews-vectors-negative300.bin.zip"
 embeddings_folder = "embeddings"
 os.makedirs(embeddings_folder, exist_ok=True)
 
