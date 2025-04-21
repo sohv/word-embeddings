@@ -1,4 +1,10 @@
-# Word Embedding Analysis Project
+# Language Representation Through Word Embeddings
+
+## Table of Contents
+1. [Overview](#Overview)
+2. [Key Features](#key-features)
+3. [Project Structure](#project-structure)
+   - [Neo4j](#neo4j-for-windows)
 
 ## Overview
 This project implements a comprehensive framework for analyzing and evaluating word embeddings derived from co-occurrence matrices, with comparison to pre-trained embeddings (GloVe and Word2Vec). The analysis focuses on understanding how different dimensionality reduction techniques affect embedding quality and semantic relationships between words.
@@ -72,8 +78,8 @@ This project implements a comprehensive framework for analyzing and evaluating w
 
 1. Clone the repository:
 ```bash
-git clone [repository-url]
-cd [repository-name]
+git clone https://github.com/sohv/word-embeddings.git
+cd word-embeddings
 ```
 
 2. Install dependencies:
