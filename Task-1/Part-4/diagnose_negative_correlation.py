@@ -64,20 +64,18 @@ def analyze_co_occurrence_matrix(matrix, word2id, id2word, sample_size=10, top_n
     print(f"Number of rows with all zeros: {len(zero_rows)} ({len(zero_rows)/matrix.shape[0]*100:.2f}%)")
     print(f"Number of columns with all zeros: {len(zero_cols)} ({len(zero_cols)/matrix.shape[1]*100:.2f}%)")
     
-    # Value distribution
     if sparse.issparse(matrix):
         values = matrix.data
     else:
         values = matrix.flatten()
-        values = values[values > 0]  # Only consider non-zero values
-    
+        values = values[values > 0] 
+        
     print("\nValue statistics:")
     print(f"  Min value: {values.min()}")
     print(f"  Max value: {values.max()}")
     print(f"  Mean value: {values.mean():.4f}")
     print(f"  Median value: {np.median(values):.4f}")
     
-    # Histogram of values
     plt.figure(figsize=(10, 6))
     plt.hist(values, bins=50, log=True)
     plt.title('Histogram of Non-zero Co-occurrence Values (log scale)')
@@ -88,7 +86,6 @@ def analyze_co_occurrence_matrix(matrix, word2id, id2word, sample_size=10, top_n
     plt.savefig('plots/cooc_value_histogram.png', dpi=300, bbox_inches='tight')
     print("Saved value histogram to plots/cooc_value_histogram.png")
     
-    # Sample some common words to check their co-occurrence patterns
     common_words = ["the", "and", "of", "to", "in", "is", "it", "that", "was", "for"]
     found_common_words = [word for word in common_words if word in word2id]
     
@@ -96,12 +93,10 @@ def analyze_co_occurrence_matrix(matrix, word2id, id2word, sample_size=10, top_n
         print(f"\nAnalyzing co-occurrences for common words: {', '.join(found_common_words)}")
         analyze_words(found_common_words, matrix, word2id, id2word, top_n)
     
-    # Sample random words
     vocab_size = len(word2id)
     if sample_size > vocab_size:
         sample_size = vocab_size
         
-    # Ensure we pick words that actually have co-occurrences
     valid_indices = np.where(row_sums > 0)[0]
     if len(valid_indices) < sample_size:
         sample_indices = valid_indices
@@ -112,7 +107,6 @@ def analyze_co_occurrence_matrix(matrix, word2id, id2word, sample_size=10, top_n
     print(f"\nAnalyzing co-occurrences for {len(sample_words)} random words")
     analyze_words(sample_words, matrix, word2id, id2word, top_n)
     
-    # Check for symmetry (if square matrix)
     if matrix.shape[0] == matrix.shape[1]:
         print("\nChecking matrix symmetry...")
         if sparse.issparse(matrix):
@@ -137,10 +131,6 @@ def analyze_co_occurrence_matrix(matrix, word2id, id2word, sample_size=10, top_n
     }
 
 def analyze_words(words, matrix, word2id, id2word, top_n=5):
-    """Analyze co-occurrence patterns for a list of words"""
-    import numpy as np
-    from scipy import sparse
-    
     for word in words:
         if word not in word2id:
             print(f"Word '{word}' not found in vocabulary")
@@ -148,14 +138,12 @@ def analyze_words(words, matrix, word2id, id2word, top_n=5):
             
         word_idx = word2id[word]
         
-        # Get co-occurrence vector for this word
         if sparse.issparse(matrix):
             co_occ = matrix[word_idx].toarray().flatten()
         else:
             co_occ = matrix[word_idx]
         
-        # Find top co-occurring words
-        top_indices = np.argsort(co_occ)[::-1][:top_n+1]  # +1 to account for self-co-occurrence
+        top_indices = np.argsort(co_occ)[::-1][:top_n+1]  
         
         print(f"\nWord: '{word}'")
         print(f"  Total co-occurrences: {co_occ.sum():.0f}")
@@ -163,34 +151,27 @@ def analyze_words(words, matrix, word2id, id2word, top_n=5):
         print(f"  Top co-occurring words:")
         
         for idx in top_indices:
-            if idx != word_idx:  # Skip self co-occurrence
+            if idx != word_idx:  
                 co_word = id2word[idx]
                 count = co_occ[idx]
                 print(f"    '{co_word}': {count:.0f}")
 
-# Example usage in main function:
 def check_co_occurrence_matrix():
-    # Load vocabulary
     vocab_path = 'data/vocab_file.txt'
     vocab, word2id, id2word = load_vocab(vocab_path)
     
-    # Load co-occurrence matrix
     matrix_path = 'cooc_matrix_w5.pkl'
     cooc_matrix = load_co_occurrence(matrix_path)
     
-    # Analyze the matrix
     analysis_results = analyze_co_occurrence_matrix(cooc_matrix, word2id, id2word)
     
-    # If there are issues, check for specific problematic patterns
-    if analysis_results['zero_rows'] > 0.1 * cooc_matrix.shape[0]:  # If >10% of rows are empty
+    if analysis_results['zero_rows'] > 0.1 * cooc_matrix.shape[0]:  
         print("\nWARNING: Many words have no co-occurrences. This will affect embedding quality.")
     
-    # Check for vocabulary/matrix size mismatch
     if len(vocab) != cooc_matrix.shape[0]:
         print(f"\nWARNING: Vocabulary size ({len(vocab)}) doesn't match matrix rows ({cooc_matrix.shape[0]})")
     
-    # Check if matrix values are too sparse
-    if analysis_results['density'] < 0.0001:  # Very sparse
+    if analysis_results['density'] < 0.0001:  
         print("\nWARNING: Matrix is extremely sparse. May not contain enough information.")
     
     return analysis_results
