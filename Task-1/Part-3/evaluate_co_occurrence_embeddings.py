@@ -206,7 +206,7 @@ def run_analogy_test(embeddings, word2idx, analogy_file):
     return results
 
 def main():
-    matrix_file = 'models/co-occurrence-symmetry/cooc_matrix_w20.pkl'
+    matrix_file = 'models/co-occurrence-symmetry/cooc_matrix_w5.pkl'
     embedding_dim = 1490
     matrix, word2idx, idx2word, evaluation = load_cooc_matrix(matrix_file)
     embeddings, svd_model = train_embeddings(matrix, dimensions=embedding_dim)
