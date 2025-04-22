@@ -167,7 +167,7 @@ def plot_evaluation_results(results):
         plt.close()
 
 def download_simlex_subset():
-    simlex_path = 'data/simlex_subset.txt'
+    simlex_path = 'data/simlex_full.txt'
     if os.path.exists(simlex_path):
         print(f"SimLex subset already exists at {simlex_path}")
         return simlex_path
