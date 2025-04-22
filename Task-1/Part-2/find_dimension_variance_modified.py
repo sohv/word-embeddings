@@ -1,7 +1,7 @@
 '''
 This script finds the optimal SVD dimension using the explained variance + noise threshold method. Here, the approach used is slightly different from the find_dimension_variance.py file.
 We use Frobenius norm to calculate the total energy of the matrix instead of full SVD as the generated matrix is very sparse and this method is computationally more efficient than full SVD.
-The ideal dimension obtained here matches with the set variance threshold and also returns an ideal Spearman correlation during word embedding evaluation.
+The ideal dimension obtained here matches with the set variance threshold and balances the noise and variance effectively.
 '''
 
 import numpy as np
@@ -197,5 +197,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
