@@ -7,7 +7,7 @@
    - [Neo4j](#neo4j-for-windows)
 
 ## Overview
-This project implements a comprehensive framework for analyzing and evaluating word embeddings derived from co-occurrence matrices, with comparison to pre-trained embeddings (GloVe and Word2Vec). The analysis focuses on understanding how different dimensionality reduction techniques affect embedding quality and semantic relationships between words.
+This project implements a comprehensive framework for analyzing and evaluating word embeddings derived from co-occurrence matrices, with comparison to pre-trained embeddings (GloVe and Word2Vec). The analysis focuses on understanding how different dimensionality reduction techniques affect embedding quality and semantic relationships between words. Access the project report [here](https://drive.google.com/file/d/1arvF6EAzD143_SfyVrheGsgBo-Djt71P/view?usp=sharing).
 
 ## Key Features
 - **Co-occurrence Matrix Processing**: Efficient handling and analysis of word co-occurrence data
