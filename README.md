@@ -119,6 +119,7 @@ pip install -r requirements.txt
 ```bash
 mkdir models  //to store the model files
 mkdir embeddings //to store the pre-trained embeddings
+```
  
 5. Download required data:
 - Place vocabulary file in data directory
