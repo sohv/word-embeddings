@@ -274,10 +274,6 @@ def main():
         print("\nWindow Size Analysis:")
         print(f"Inflection points found at window sizes: {coverage_inflections}")
         print(f"Recommended window size: {recommended_window}")
-    
-    print("\nNOTE: The co-occurrence matrix is now symmetric by construction.")
-    print("If you already have embeddings trained on previous non-symmetric matrices,")
-    print("consider rebuilding them with this symmetric matrix for more accurate results.")
-
+        
 if __name__ == "__main__":
     main()
